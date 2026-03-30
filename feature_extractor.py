@@ -1,12 +1,3 @@
-"""
-feature_extractor.py
---------------------
-Converts preprocessed resume text into numerical feature vectors using:
-  - TF-IDF  (default, works out of the box)
-  - Bag-of-Words
-  - Optional Word2Vec average embeddings
-"""
-
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -19,11 +10,6 @@ try:
     GENSIM_AVAILABLE = True
 except ImportError:
     GENSIM_AVAILABLE = False
-
-
-# ---------------------------------------------------------------------------
-# TF-IDF Features
-# ---------------------------------------------------------------------------
 
 class TFIDFExtractor:
     """
@@ -70,11 +56,6 @@ class TFIDFExtractor:
         self._fitted = True
         print(f"Vectorizer loaded ← {path}")
 
-
-# ---------------------------------------------------------------------------
-# Bag-of-Words Features
-# ---------------------------------------------------------------------------
-
 class BagOfWordsExtractor:
     """Simple CountVectorizer wrapper."""
 
@@ -89,11 +70,6 @@ class BagOfWordsExtractor:
 
     def get_feature_names(self) -> list[str]:
         return self.vectorizer.get_feature_names_out().tolist()
-
-
-# ---------------------------------------------------------------------------
-# Word2Vec Average Embeddings (optional)
-# ---------------------------------------------------------------------------
 
 class Word2VecExtractor:
     """
