@@ -1,12 +1,3 @@
-"""
-screener.py
------------
-Core screening logic:
-  1. Keyword-based matching
-  2. TF-IDF cosine similarity ranking
-  3. Optional ML classifier (Logistic Regression)
-"""
-
 import re
 import json
 import numpy as np
@@ -19,11 +10,6 @@ import joblib
 
 from src.preprocessor import preprocess, preprocess_to_string
 from src.feature_extractor import TFIDFExtractor
-
-
-# ---------------------------------------------------------------------------
-# Keyword / Skill Matcher
-# ---------------------------------------------------------------------------
 
 SKILL_CATEGORIES = {
     "programming": [
@@ -51,13 +37,7 @@ SKILL_CATEGORIES = {
 
 
 def extract_keywords(text: str, skill_dict: dict = SKILL_CATEGORIES) -> dict:
-    """
-    Scan resume text for known skills grouped by category.
-
-    Returns
-    -------
-    dict: {category: [matched_skills]}
-    """
+    
     text_lower = text.lower()
     matched = {}
     for category, skills in skill_dict.items():
@@ -68,39 +48,14 @@ def extract_keywords(text: str, skill_dict: dict = SKILL_CATEGORIES) -> dict:
 
 
 def keyword_score(resume_text: str, required_skills: list[str]) -> dict:
-    """
-    Score a resume based on how many required skills it contains.
-
-    Parameters
-    ----------
-    resume_text    : raw or preprocessed resume string
-    required_skills: list of must-have skills from the job description
-
-    Returns
-    -------
-    dict with 'score' (0-100), 'matched', 'missing'
-    """
+   
     text_lower = resume_text.lower()
     matched = [s for s in required_skills if re.search(r"\b" + re.escape(s.lower()) + r"\b", text_lower)]
     missing = [s for s in required_skills if s not in matched]
     score = round(len(matched) / len(required_skills) * 100, 1) if required_skills else 0
     return {"score": score, "matched": matched, "missing": missing}
 
-
-# ---------------------------------------------------------------------------
-# TF-IDF Similarity Ranker
-# ---------------------------------------------------------------------------
-
 class ResumeRanker:
-    """
-    Ranks a pool of resumes against a job description using TF-IDF cosine
-    similarity.
-
-    Workflow
-    --------
-    ranker = ResumeRanker()
-    results = ranker.rank(job_description_text, list_of_resume_texts)
-    """
 
     def __init__(self):
         self.extractor = TFIDFExtractor(max_features=8000)
@@ -111,19 +66,7 @@ class ResumeRanker:
         resumes: list[str],
         resume_ids: list[str] | None = None,
     ) -> pd.DataFrame:
-        """
-        Rank resumes by cosine similarity to the job description.
-
-        Parameters
-        ----------
-        job_description : raw JD text
-        resumes         : list of raw resume texts
-        resume_ids      : optional list of labels/filenames
-
-        Returns
-        -------
-        DataFrame sorted by similarity score (descending)
-        """
+       
         if resume_ids is None:
             resume_ids = [f"resume_{i+1}" for i in range(len(resumes))]
 
@@ -149,36 +92,15 @@ class ResumeRanker:
         df.index.name = "rank"
         return df
 
-
-# ---------------------------------------------------------------------------
-# ML Classifier (Optional Advanced Screening)
-# ---------------------------------------------------------------------------
-
 class ResumeClassifier:
-    """
-    Binary classifier: suitable (1) vs not suitable (0).
-
-    Requires labelled training data (resume text + label).
-    """
-
+    
     def __init__(self):
         self.extractor = TFIDFExtractor(max_features=5000)
         self.model = LogisticRegression(max_iter=1000, C=1.0)
         self._trained = False
 
     def train(self, texts: list[str], labels: list[int]) -> str:
-        """
-        Train on a labelled dataset.
-
-        Parameters
-        ----------
-        texts  : list of raw resume strings
-        labels : list of 0/1 labels
-
-        Returns
-        -------
-        Classification report string
-        """
+        
         processed = [preprocess_to_string(t) for t in texts]
         X = self.extractor.fit_transform(processed)
         y = np.array(labels)
