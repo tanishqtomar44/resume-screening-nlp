@@ -1,17 +1,3 @@
-"""
-main.py
--------
-Entry point for the Resume Screening System.
-
-Usage
------
-  # Screen resumes from a folder against a job description file:
-  python main.py --jd data/job_description.txt --resumes data/sample_resumes/ --top 5
-
-  # Also run keyword matching with a skills config:
-  python main.py --jd data/job_description.txt --resumes data/sample_resumes/ --skills config/skills.json
-"""
-
 import argparse
 import json
 import os
@@ -20,16 +6,10 @@ from pathlib import Path
 
 import pandas as pd
 
-# Make sure src/ is importable when running from project root
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.preprocessor import extract_text
 from src.screener import ResumeRanker, keyword_score, extract_keywords, SKILL_CATEGORIES
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 
 SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".txt"}
 
@@ -72,11 +52,6 @@ def save_results(df: pd.DataFrame, output_path: str = "results/ranking.csv"):
     df.to_csv(output_path)
     print(f"\n[✓] Results saved → {output_path}")
 
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-
 def main():
     parser = argparse.ArgumentParser(description="NLP Resume Screening System")
     parser.add_argument("--jd", required=True, help="Path to job description (.txt)")
@@ -87,18 +62,15 @@ def main():
     args = parser.parse_args()
 
     print_banner()
-
-    # ── Load Job Description ─────────────────────────────────────────────
+  
     print(f"\n[1] Loading job description: {args.jd}")
     jd_text = Path(args.jd).read_text(encoding="utf-8", errors="ignore")
     print(f"    → {len(jd_text.split())} words detected")
 
-    # ── Load Resumes ──────────────────────────────────────────────────────
     print(f"\n[2] Loading resumes from: {args.resumes}")
     resume_texts, resume_ids = load_resumes(args.resumes)
     print(f"    → {len(resume_texts)} resumes loaded")
 
-    # ── TF-IDF Ranking ────────────────────────────────────────────────────
     print("\n[3] Running TF-IDF similarity ranking …")
     ranker = ResumeRanker()
     ranking_df = ranker.rank(jd_text, resume_texts, resume_ids)
@@ -109,7 +81,6 @@ def main():
     print(f"{'─'*45}")
     print(ranking_df.head(top_n).to_string())
 
-    # ── Keyword Matching ──────────────────────────────────────────────────
     required_skills = []
     if args.skills:
         with open(args.skills) as f:
@@ -146,7 +117,6 @@ def main():
     else:
         save_results(ranking_df, args.output)
 
-    # ── Skill Category Report for Top Resume ─────────────────────────────
     best_idx = ranking_df.iloc[0].name - 1
     best_resume_text = resume_texts[best_idx]
     best_resume_id = resume_ids[best_idx]
