@@ -1,8 +1,3 @@
-"""
-tests/test_screener.py
-Unit tests for the resume screening system.
-"""
-
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -11,9 +6,6 @@ import unittest
 from src.preprocessor import clean_text, tokenize, remove_stopwords, lemmatize, preprocess
 from src.screener import keyword_score, extract_keywords
 from src.feature_extractor import TFIDFExtractor, BagOfWordsExtractor
-
-
-# ── Preprocessing Tests ───────────────────────────────────────────────────
 
 class TestPreprocessor(unittest.TestCase):
 
@@ -57,9 +49,6 @@ class TestPreprocessor(unittest.TestCase):
         for token in result:
             self.assertEqual(token, token.lower())
 
-
-# ── Keyword Matching Tests ────────────────────────────────────────────────
-
 class TestKeywordScreener(unittest.TestCase):
 
     SAMPLE_RESUME = """
@@ -86,9 +75,6 @@ class TestKeywordScreener(unittest.TestCase):
         skills = extract_keywords(self.SAMPLE_RESUME)
         self.assertIn("programming", skills)
         self.assertIn("python", skills["programming"])
-
-
-# ── Feature Extraction Tests ──────────────────────────────────────────────
 
 class TestFeatureExtractor(unittest.TestCase):
 
