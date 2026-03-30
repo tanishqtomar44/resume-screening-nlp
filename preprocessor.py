@@ -1,16 +1,9 @@
-"""
-preprocessor.py
----------------
-Handles text extraction and NLP preprocessing for resumes.
-"""
-
 import re
 import string
 import nltk
 import spacy
 from pathlib import Path
 
-# Download required NLTK data (run once)
 nltk.download("stopwords", quiet=True)
 nltk.download("punkt", quiet=True)
 nltk.download("wordnet", quiet=True)
@@ -31,11 +24,6 @@ try:
     DOCX_SUPPORT = True
 except ImportError:
     DOCX_SUPPORT = False
-
-
-# ---------------------------------------------------------------------------
-# Text Extraction
-# ---------------------------------------------------------------------------
 
 def extract_text_from_pdf(filepath: str) -> str:
     """Extract raw text from a PDF resume using pdfplumber."""
@@ -78,11 +66,6 @@ def extract_text(filepath: str) -> str:
     if ext not in extractors:
         raise ValueError(f"Unsupported file type: {ext}")
     return extractors[ext](filepath)
-
-
-# ---------------------------------------------------------------------------
-# Text Cleaning & Preprocessing
-# ---------------------------------------------------------------------------
 
 STOP_WORDS = set(stopwords.words("english"))
 LEMMATIZER = WordNetLemmatizer()
