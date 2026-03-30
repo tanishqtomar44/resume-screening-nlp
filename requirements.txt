@@ -1,0 +1,19 @@
+# Core NLP
+nltk==3.8.1
+spacy==3.7.4
+
+# ML / Feature Extraction
+scikit-learn==1.4.2
+numpy==1.26.4
+pandas==2.2.2
+joblib==1.4.0
+
+# Optional: Word2Vec / GloVe embeddings
+gensim==4.3.2
+
+# Resume file parsing
+pdfplumber==0.11.0
+python-docx==1.1.0
+
+# Utilities
+tqdm==4.66.2

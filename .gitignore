@@ -1,0 +1,33 @@
+# Virtual Environment
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Models (large binary files — store with Git LFS if needed)
+models/*.pkl
+
+# Data (may contain sensitive PII)
+data/sample_resumes/*.pdf
+data/sample_resumes/*.docx
+
+# Results
+results/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Environment variables
+.env
